@@ -23,112 +23,48 @@ footer { text-align:center; padding:40px; opacity:.6; font-size:.85rem; }
 </head>
 <body>
 <header>
-  <span class="badge">Earn WPEPU by Holding</span>
-  <h1>REWARD (RWD)</h1>
-  <p>The degen reward token that pays you in WPEPU.</p>
+<span class="badge">Earn WPEPU by Holding</span>
+<h1>REWARD (RWD)</h1>
+<p>The degen reward token that pays you in WPEPU.</p>
 </header>
 
-<section class="section">
-  <div class="grid">
-    <div class="card"><h3>Buy Tax</h3><p>10%</p><p>5% Rewards<br>5% Dev</p></div>
-    <div class="card"><h3>Sell Tax</h3><p>20%</p><p>100% Rewards</p></div>
-    <div class="card"><h3>Supply</h3><p>1,000,000,000 RWD</p></div>
-    <div class="card"><h3>Rewards</h3><p>WPEPU</p></div>
-  </div>
-</section>
 
 <section class="section">
-  <div class="card">
-    <h2>Live Chart</h2>
-    <iframe src="https://www.geckoterminal.com/eth/pools/0xb1b10b05aa043dd8d471d4da999782bc694993e3ecbe8e7319892b261b412ed5?embed=1"></iframe>
-  </div>
+<div class="card">
+<h2>FAQ</h2>
+
+
+<h4>What is REWARD (RWD)?</h4>
+<p>REWARD is a degen reward token designed to distribute WPEPU automatically to holders through buy and sell taxes.</p>
+
+
+<h4>How do rewards work?</h4>
+<p>Rewards are generated from trading activity. Taxes collected in RWD are swapped into WPEPU and distributed proportionally to holders.</p>
+
+
+<h4>Do I need to stake my tokens?</h4>
+<p>No. Simply holding RWD in your wallet makes you eligible for rewards.</p>
+
+
+<h4>How can I claim my rewards?</h4>
+<p>You can claim your WPEPU rewards directly from this website by connecting your wallet and clicking “Claim Rewards”.</p>
+
+
+<h4>Is the smart contract upgradeable?</h4>
+<p>No. The smart contract is immutable after deployment. Taxes and reward logic cannot be changed.</p>
+
+
+<h4>Which network is REWARD deployed on?</h4>
+<p>REWARD is deployed on the Pepe Unchained network.</p>
+</div>
 </section>
 
-<section id="claim" class="section">
-  <div class="card">
-    <h2>Claim Your WPEPU Rewards</h2>
-    <p>Rewards accumulate automatically. Claim them whenever you want.</p>
 
-    <div id="rewardValue">— WPEPU</div>
-
-    <button id="connectWallet">Connect Wallet</button>
-    <button id="claimRewards" disabled>Claim Rewards</button>
-
-    <p id="claimStatus"></p>
-  </div>
+<section class="section">
+<div class="card">
+<h2>Live Chart</h2>
+<iframe src="https://www.geckoterminal.com/eth/pools/0xb1b10b05aa043dd8d471d4da999782bc694993e3ecbe8e7319892b261b412ed5?embed=1"></iframe>
+</div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
-<script>
-let provider;
-let signer;
-let contract;
 
-const contractAddress = "0x49ef1deD412f91c06030047e7DA92034066C4127";
-
-const abi = [
-  "function withdrawableRewardOf(address) view returns (uint256)",
-  "function withdrawReward()",
-];
-
-const connectBtn = document.getElementById("connectWallet");
-const claimBtn = document.getElementById("claimRewards");
-const rewardValue = document.getElementById("rewardValue");
-const statusText = document.getElementById("claimStatus");
-
-async function connectWallet() {
-  if (!window.ethereum) {
-    alert("MetaMask not detected");
-    return;
-  }
-
-  await window.ethereum.request({ method: "eth_requestAccounts" });
-
-  provider = new ethers.providers.Web3Provider(window.ethereum);
-  signer = provider.getSigner();
-  contract = new ethers.Contract(contractAddress, abi, signer);
-
-  connectBtn.innerText = "Wallet Connected";
-  connectBtn.disabled = true;
-
-  refreshRewards();
-}
-
-async function refreshRewards() {
-  const user = await signer.getAddress();
-  const rewards = await contract.withdrawableRewardOf(user);
-  const formatted = ethers.utils.formatUnits(rewards, 18);
-
-  if (rewards.eq(0)) {
-    rewardValue.innerText = "0 WPEPU";
-    statusText.innerText = "No rewards to claim";
-    claimBtn.disabled = true;
-  } else {
-    rewardValue.innerText = formatted + " WPEPU";
-    statusText.innerText = "";
-    claimBtn.disabled = false;
-  }
-}
-
-async function claimRewards() {
-  try {
-    claimBtn.disabled = true;
-    statusText.innerText = "Claiming rewards...";
-
-    const tx = await contract.withdrawReward();
-    await tx.wait();
-
-    statusText.innerText = "Rewards claimed!";
-    refreshRewards();
-  } catch (e) {
-    statusText.innerText = "Claim failed";
-    claimBtn.disabled = false;
-  }
-}
-
-connectBtn.onclick = connectWallet;
-claimBtn.onclick = claimRewards;
-</script>
-
-</body>
-</html>
