@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>REWARD (RWD)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+body { margin:0; font-family:'Inter',sans-serif; background:#0b0f14; color:#e6e6e6; }
+header { padding:80px 20px; text-align:center; background:radial-gradient(circle at top, #1a3cff33, #0b0f14 70%); }
+header h1 { font-size:3rem; margin-bottom:10px; }
+header p { font-size:1.2rem; opacity:.85; }
+.section { padding:70px 20px; max-width:1100px; margin:auto; }
+.card { background:#111827; border-radius:16px; padding:30px; box-shadow:0 0 40px #00000055; margin-bottom:30px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; }
+.badge { display:inline-block; padding:6px 14px; border-radius:999px; background:#1a3cff; font-size:.85rem; margin-bottom:15px; }
+button { background:#1a3cff; color:white; border:none; padding:14px 26px; border-radius:12px; font-size:1rem; cursor:pointer; }
+button:disabled { opacity:.5; cursor:not-allowed; }
+#rewardValue { font-size:2rem; font-weight:800; margin:15px 0; }
+iframe { width:100%; height:480px; border:none; border-radius:16px; }
+footer { text-align:center; padding:40px; opacity:.6; font-size:.85rem; }
+</style>
+</head>
+<body>
+<header>
+  <span class="badge">Earn WPEPU by Holding</span>
+  <h1>REWARD (RWD)</h1>
+  <p>The degen reward token that pays you in WPEPU.</p>
+</header>
+
+<section class="section">
+  <div class="grid">
+    <div class="card"><h3>Buy Tax</h3><p>10%</p><p>5% Rewards<br>5% Dev</p></div>
+    <div class="card"><h3>Sell Tax</h3><p>20%</p><p>100% Rewards</p></div>
+    <div class="card"><h3>Supply</h3><p>1,000,000,000 RWD</p></div>
+    <div class="card"><h3>Rewards</h3><p>WPEPU</p></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="card">
+    <h2>Live Chart</h2>
+    <iframe src="https://www.geckoterminal.com/eth/pools/0xb1b10b05aa043dd8d471d4da999782bc694993e3ecbe8e7319892b261b412ed5?embed=1"></iframe>
+  </div>
+</section>
+
+<section id="claim" class="section">
+  <div class="card">
+    <h2>Claim Your WPEPU Rewards</h2>
+    <p>Rewards accumulate automatically. Claim them whenever you want.</p>
+
+    <div id="rewardValue">— WPEPU</div>
+
+    <button id="connectWallet">Connect Wallet</button>
+    <button id="claimRewards" disabled>Claim Rewards</button>
+
+    <p id="claimStatus"></p>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+<script>
+  const contractAddress = "PASTE_CONTRACT_ADDRESS_HERE";
+  // Auto-detect chainId from wallet
+let REQUIRED_CHAIN_ID = null;
+  const abi = [
+    "function withdrawReward() external",
+    "function withdrawableRewardOf(address) view returns (uint256)"
+  ];
+
+  let provider, signer, contract, userAddress;
+  let rewardInterval = null;
+
+  async function updateRewards() {
+    if (!contract || !userAddress) return;
+    try {
+      const rewards = await contract.withdrawableRewardOf(userAddress);
+      const formatted = ethers.utils.formatUnits(rewards, 18);
+      document.getElementById("rewardValue").innerText = `${formatted} WPEPU`;
+
+      if (rewards.eq(0)) {
+        document.getElementById("claimStatus").innerText = "No rewards to claim";
+        document.getElementById("claimRewards").disabled = true;
+      } else {
+        document.getElementById("claimStatus").innerText = "Rewards available";
+        document.getElementById("claimRewards").disabled = false;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  document.getElementById("connectWallet").onclick = async () => {
+    if (!window.ethereum) {
+      alert("MetaMask not found");
+      return;
+    }
+
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+
+    const network = await provider.getNetwork();
+    REQUIRED_CHAIN_ID = network.chainId;
+
+    signer = provider.getSigner();
+    userAddress = await signer.getAddress();
+    contract = new ethers.Contract(contractAddress, abi, signer);
+
+    document.getElementById("claimStatus").innerText = "Wallet connected";
+
+    await updateRewards();
+
+    if (rewardInterval) clearInterval(rewardInterval);
+    rewardInterval = setInterval(updateRewards, 15000); // auto-refresh every 15s
+  };
+
+  document.getElementById("claimRewards").onclick = async () => {
+    try {
+      document.getElementById("claimStatus").innerText = "Claiming rewards...";
+      const tx = await contract.withdrawReward();
+      await tx.wait();
+      document.getElementById("claimStatus").innerText = "Rewards claimed successfully";
+      await updateRewards();
+    } catch (err) {
+      document.getElementById("claimStatus").innerText = "Claim failed";
+    }
+  };
+</script>
+
+</body>
+</html>
