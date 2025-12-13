@@ -1,70 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>REWARD (RWD)</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-body { margin:0; font-family:'Inter',sans-serif; background:#0b0f14; color:#e6e6e6; }
-header { padding:80px 20px; text-align:center; background:radial-gradient(circle at top, #1a3cff33, #0b0f14 70%); }
-header h1 { font-size:3rem; margin-bottom:10px; }
-header p { font-size:1.2rem; opacity:.85; }
-.section { padding:70px 20px; max-width:1100px; margin:auto; }
-.card { background:#111827; border-radius:16px; padding:30px; box-shadow:0 0 40px #00000055; margin-bottom:30px; }
-.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; }
-.badge { display:inline-block; padding:6px 14px; border-radius:999px; background:#1a3cff; font-size:.85rem; margin-bottom:15px; }
-button { background:#1a3cff; color:white; border:none; padding:14px 26px; border-radius:12px; font-size:1rem; cursor:pointer; }
-button:disabled { opacity:.5; cursor:not-allowed; }
-#rewardValue { font-size:2rem; font-weight:800; margin:15px 0; }
-iframe { width:100%; height:480px; border:none; border-radius:16px; }
-footer { text-align:center; padding:40px; opacity:.6; font-size:.85rem; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REWARD (RWD)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top, #2b1055, #000 70%);
+      color: #f5f5f5;
+    }
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+      padding: 80px 10%;
+      align-items: center;
+    }
+    h1 {
+      font-size: 4rem;
+      margin: 0;
+      line-height: 1;
+    }
+    .tagline {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 600px;
+    }
+    .claim-box {
+      background: #111;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 40px #000;
+      text-align: center;
+      min-width: 280px;
+    }
+    .reward-big {
+      font-size: 2.2rem;
+      font-weight: 900;
+      margin: 20px 0;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 1rem;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ff0080, #7928ca);
+      color: #fff;
+    }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    section {
+      padding: 80px 10%;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 30px;
+      text-align: center;
+    }
+    .stat {
+      background: #0b0b0b;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: inset 0 0 0 1px #222;
+    }
+    .stat h3 { margin: 0; opacity: 0.8; }
+    .stat p { font-size: 1.8rem; font-weight: 900; margin-top: 10px; }
+
+    iframe {
+      width: 100%;
+      height: 420px;
+      border: none;
+      border-radius: 20px;
+      margin-top: 40px;
+    }
+
+    .faq h3 { margin-top: 30px; }
+    footer {
+      text-align: center;
+      padding: 40px;
+      opacity: 0.5;
+      font-size: 0.85rem;
+    }
+  </style>
 </head>
 <body>
+
 <header>
-<span class="badge">Earn WPEPU by Holding</span>
-<h1>REWARD (RWD)</h1>
-<p>The degen reward token that pays you in WPEPU.</p>
+  <div>
+    <h1>REWARD</h1>
+    <div class="tagline">
+      The most degen way to farm WPEPU.<br>
+      Buy. Sell. Hold. Get paid.
+    </div>
+  </div>
+
+  <div class="claim-box">
+    <div>Your claimable WPEPU</div>
+    <div id="rewardValue" class="reward-big">—</div>
+    <button id="connectWallet">Connect Wallet</button>
+    <button id="claimRewards" disabled style="margin-top:10px">Claim</button>
+    <div id="claimStatus" style="margin-top:10px"></div>
+  </div>
 </header>
 
+<section>
+  <div class="stats">
+    <div class="stat">
+      <h3>Total WPEPU Distributed</h3>
+      <p>Coming soon</p>
+    </div>
+    <div class="stat">
+      <h3>24h Rewards (Buys)</h3>
+      <p>Coming soon</p>
+    </div>
+    <div class="stat">
+      <h3>24h Rewards (Sells)</h3>
+      <p>Coming soon</p>
+    </div>
+  </div>
 
-<section class="section">
-<div class="card">
-<h2>FAQ</h2>
-
-
-<h4>What is REWARD (RWD)?</h4>
-<p>REWARD is a degen reward token designed to distribute WPEPU automatically to holders through buy and sell taxes.</p>
-
-
-<h4>How do rewards work?</h4>
-<p>Rewards are generated from trading activity. Taxes collected in RWD are swapped into WPEPU and distributed proportionally to holders.</p>
-
-
-<h4>Do I need to stake my tokens?</h4>
-<p>No. Simply holding RWD in your wallet makes you eligible for rewards.</p>
-
-
-<h4>How can I claim my rewards?</h4>
-<p>You can claim your WPEPU rewards directly from this website by connecting your wallet and clicking “Claim Rewards”.</p>
-
-
-<h4>Is the smart contract upgradeable?</h4>
-<p>No. The smart contract is immutable after deployment. Taxes and reward logic cannot be changed.</p>
-
-
-<h4>Which network is REWARD deployed on?</h4>
-<p>REWARD is deployed on the Pepe Unchained network.</p>
-</div>
+  <iframe src="https://www.geckoterminal.com/eth/pools/0xb1b10b05aa043dd8d471d4da999782bc694993e3ecbe8e7319892b261b412ed5?embed=1"></iframe>
 </section>
 
+<section class="faq">
+  <h2>FAQ</h2>
 
-<section class="section">
-<div class="card">
-<h2>Live Chart</h2>
-<iframe src="https://www.geckoterminal.com/eth/pools/0xb1b10b05aa043dd8d471d4da999782bc694993e3ecbe8e7319892b261b412ed5?embed=1"></iframe>
-</div>
+  <h3>What the hell is REWARD?</h3>
+  <p>A degen token that taxes buys and sells and pays holders in WPEPU. No staking. No BS.</p>
+
+  <h3>How do rewards work?</h3>
+  <p>Volume happens. Taxes are collected. RWD is swapped for WPEPU. Holders get paid.</p>
+
+  <h3>Do I need to do anything?</h3>
+  <p>Just hold RWD. Claim whenever you want.</p>
+
+  <h3>Is this safe?</h3>
+  <p>Contract is immutable. No tax changes. What you see is what you get.</p>
 </section>
 
+<footer>
+  © REWARD • Full degen mode enabled
+</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+<script>
+let provider, signer, contract;
+const contractAddress = "0x49ef1deD412f91c06030047e7DA92034066C4127";
+const abi = [
+  "function withdrawableRewardOf(address) view returns (uint256)",
+  "function withdrawReward()"
+];
+
+const connectBtn = document.getElementById("connectWallet");
+const claimBtn = document.getElementById("claimRewards");
+const rewardValue = document.getElementById("rewardValue");
+const statusText = document.getElementById("claimStatus");
+
+connectBtn.onclick = async () => {
+  if (!window.ethereum) return alert("Install MetaMask");
+  await ethereum.request({ method: "eth_requestAccounts" });
+  provider = new ethers.providers.Web3Provider(window.ethereum);
+  signer = provider.getSigner();
+  contract = new ethers.Contract(contractAddress, abi, signer);
+  connectBtn.innerText = "Connected";
+  connectBtn.disabled = true;
+  refreshRewards();
+};
+
+async function refreshRewards() {
+  const user = await signer.getAddress();
+  const r = await contract.withdrawableRewardOf(user);
+  if (r.eq(0)) {
+    rewardValue.innerText = "0 WPEPU";
+    claimBtn.disabled = true;
+    statusText.innerText = "No rewards yet";
+  } else {
+    rewardValue.innerText = ethers.utils.formatUnits(r, 18) + " WPEPU";
+    claimBtn.disabled = false;
+    statusText.innerText = "";
+  }
+}
+
+claimBtn.onclick = async () => {
+  try {
+    statusText.innerText = "Claiming...";
+    const tx = await contract.withdrawReward();
+    await tx.wait();
+    statusText.innerText = "Paid.";
+    refreshRewards();
+  } catch {
+    statusText.innerText = "Claim failed";
+  }
+};
+</script>
+
+</body>
+</html>
