@@ -5,28 +5,143 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>REWARD (RWD)</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
   <style>
-    body { margin: 0; font-family: 'Inter', sans-serif; background: radial-gradient(circle at top, #2b1055, #000 70%); color: #f5f5f5; }
-    header { display: grid; grid-template-columns: 1fr auto; gap: 40px; padding: 80px 10%; align-items: center; }
-    h1 { font-size: 4rem; margin: 0; line-height: 1; }
-    .tagline { margin-top: 20px; font-size: 1.2rem; opacity: 0.9; max-width: 600px; }
-    .claim-box { background: #111; border-radius: 20px; padding: 30px; box-shadow: 0 0 40px #000; text-align: center; min-width: 280px; position: relative; }
-    .reward-big { font-size: 2.2rem; font-weight: 900; margin: 20px 0; transition: transform .3s ease, color .3s ease; }
-    .pulse { transform: scale(1.08); color: #ff66ff; }
-    button { width: 100%; padding: 14px; font-size: 1rem; border-radius: 12px; border: none; cursor: pointer; background: linear-gradient(135deg, #ff0080, #7928ca); color: #fff; }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-    section { padding: 80px 10%; }
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; text-align: center; }
-    .stat { background: #0b0b0b; padding: 30px; border-radius: 20px; box-shadow: inset 0 0 0 1px #222; }
-    .stat h3 { margin: 0; opacity: 0.8; }
-    .stat p { font-size: 1.8rem; font-weight: 900; margin-top: 10px; }
-    iframe { width: 100%; height: 420px; border: none; border-radius: 20px; margin-top: 40px; }
-    .faq h3 { margin-top: 30px; }
-    footer { text-align: center; padding: 40px; opacity: 0.5; font-size: 0.85rem; }
-    .modal { position: fixed; inset: 0; background: #000000cc; display: none; align-items: center; justify-content: center; z-index: 10; }
-    .modal-content { background: #111; padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 360px; }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top, #2b1055, #000 70%);
+      color: #f5f5f5;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+      padding: 80px 10%;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 4rem;
+      margin: 0;
+      line-height: 1;
+    }
+
+    .tagline {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 600px;
+    }
+
+    .claim-box {
+      background: #111;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 40px #000;
+      text-align: center;
+      min-width: 280px;
+    }
+
+    .reward-big {
+      font-size: 2.2rem;
+      font-weight: 900;
+      margin: 20px 0;
+      transition: transform .3s ease, color .3s ease;
+    }
+
+    .pulse {
+      transform: scale(1.08);
+      color: #ff66ff;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 1rem;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ff0080, #7928ca);
+      color: #fff;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    section {
+      padding: 80px 10%;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 30px;
+      text-align: center;
+    }
+
+    .stat {
+      background: #0b0b0b;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: inset 0 0 0 1px #222;
+    }
+
+    .stat h3 {
+      margin: 0;
+      opacity: 0.8;
+    }
+
+    .stat p {
+      font-size: 1.8rem;
+      font-weight: 900;
+      margin-top: 10px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 420px;
+      border: none;
+      border-radius: 20px;
+      margin-top: 40px;
+    }
+
+    .faq h3 {
+      margin-top: 30px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px;
+      opacity: 0.5;
+      font-size: 0.85rem;
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: #000000cc;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .modal-content {
+      background: #111;
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      width: 90%;
+      max-width: 360px;
+    }
   </style>
 </head>
+
 <body>
 
 <header>
@@ -41,8 +156,10 @@
   <div class="claim-box">
     <div>Your claimable WPEPU</div>
     <div id="rewardValue" class="reward-big">—</div>
+
     <button id="connectWallet">Connect Wallet</button>
-    <button id="claimRewards" disabled style="margin-top:10px">Claim</button>
+    <button id="claimRewards" style="margin-top:10px">Claim</button>
+
     <div id="claimStatus" style="margin-top:10px"></div>
   </div>
 </header>
@@ -51,15 +168,15 @@
   <div class="stats">
     <div class="stat">
       <h3>Total WPEPU Distributed</h3>
-      <p>Coming soon</p>
+      <p id="statTotal">Loading…</p>
     </div>
     <div class="stat">
       <h3>24h Rewards (Buys)</h3>
-      <p>Coming soon</p>
+      <p id="statBuys">Loading…</p>
     </div>
     <div class="stat">
       <h3>24h Rewards (Sells)</h3>
-      <p>Coming soon</p>
+      <p id="statSells">Loading…</p>
     </div>
   </div>
 
@@ -86,58 +203,116 @@
   © REWARD • Full degen mode enabled
 </footer>
 
+<div id="claimModal" class="modal">
+  <div class="modal-content">
+    <h3>Claim</h3>
+    <p id="modalText">Processing…</p>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
 <script>
-let provider, signer, contract;
-const contractAddress = "0x49ef1deD412f91c06030047e7DA92034066C4127";
-const abi = [
-  "function withdrawableRewardOf(address) view returns (uint256)",
-  "function withdrawReward()"
-];
+  let provider, signer, contract;
 
-const connectBtn = document.getElementById("connectWallet");
-const claimBtn = document.getElementById("claimRewards");
-const rewardValue = document.getElementById("rewardValue");
-const statusText = document.getElementById("claimStatus");
+  const contractAddress = "0x49ef1deD412f91c06030047e7DA92034066C4127";
+  const REQUIRED_CHAIN_ID = 777777; // Pepe Unchained
 
-connectBtn.onclick = async () => {
-  if (!window.ethereum) return alert("Install MetaMask");
-  await ethereum.request({ method: "eth_requestAccounts" });
-  provider = new ethers.providers.Web3Provider(window.ethereum);
-  signer = provider.getSigner();
-  contract = new ethers.Contract(contractAddress, abi, signer);
-  connectBtn.innerText = "Connected";
-  connectBtn.disabled = true;
-  refreshRewards();
-};
+  const abi = [
+    "function withdrawableRewardOf(address) view returns (uint256)",
+    "function withdrawReward()"
+  ];
 
-async function refreshRewards() {
-  const user = await signer.getAddress();
-  const r = await contract.withdrawableRewardOf(user);
-  if (r.eq(0)) {
-    rewardValue.innerText = "0 WPEPU";
-    claimBtn.disabled = true;
-    statusText.innerText = "No rewards yet";
-  } else {
-    rewardValue.innerText = ethers.utils.formatUnits(r, 18) + " WPEPU";
-    claimBtn.disabled = false;
-    statusText.innerText = "";
+  const connectBtn = document.getElementById("connectWallet");
+  const claimBtn = document.getElementById("claimRewards");
+  const rewardValue = document.getElementById("rewardValue");
+  const statusText = document.getElementById("claimStatus");
+  const modal = document.getElementById("claimModal");
+  const modalText = document.getElementById("modalText");
+
+  async function ensureChain() {
+    const net = await provider.getNetwork();
+    if (net.chainId !== REQUIRED_CHAIN_ID) {
+      try {
+        await ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: ethers.utils.hexValue(REQUIRED_CHAIN_ID) }]
+        });
+      } catch {
+        alert('Please switch to Pepe Unchained network');
+        throw new Error('Wrong chain');
+      }
+    }
   }
-}
 
-claimBtn.onclick = async () => {
-  try {
-    statusText.innerText = "Claiming...";
-    const tx = await contract.withdrawReward();
-    await tx.wait();
-    statusText.innerText = "Paid.";
+  connectBtn.onclick = async () => {
+    if (!window.ethereum) return alert("Install MetaMask");
+
+    await ethereum.request({ method: "eth_requestAccounts" });
+
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    await ensureChain();
+
+    signer = provider.getSigner();
+    contract = new ethers.Contract(contractAddress, abi, signer);
+
+    connectBtn.innerText = "Connected";
+    connectBtn.disabled = true;
+
     refreshRewards();
-  } catch {
-    statusText.innerText = "Claim failed";
+    setInterval(refreshRewards, 15000);
+  };
+
+  async function refreshRewards() {
+    if (!signer) return;
+
+    const user = await signer.getAddress();
+    const r = await contract.withdrawableRewardOf(user);
+    const prev = rewardValue.innerText;
+
+    if (r.eq(0)) {
+      rewardValue.innerText = "0 WPEPU";
+      statusText.innerText = "No rewards yet";
+      claimBtn.disabled = false;
+    } else {
+      const val = ethers.utils.formatUnits(r, 18) + " WPEPU";
+      rewardValue.innerText = val;
+      statusText.innerText = "";
+      claimBtn.disabled = false;
+
+      if (prev !== val) {
+        rewardValue.classList.add('pulse');
+        setTimeout(() => rewardValue.classList.remove('pulse'), 300);
+      }
+    }
   }
-};
+
+  claimBtn.onclick = async () => {
+    try {
+      modal.style.display = 'flex';
+      modalText.innerText = 'Preparing claim…';
+
+      const user = await signer.getAddress();
+      const r = await contract.withdrawableRewardOf(user);
+
+      if (r.eq(0)) {
+        modalText.innerText = 'No rewards yet. Wait for volume.';
+        setTimeout(() => modal.style.display = 'none', 1500);
+        return;
+      }
+
+      modalText.innerText = 'Claiming rewards…';
+      const tx = await contract.withdrawReward();
+      await tx.wait();
+
+      modalText.innerText = 'Paid.';
+      setTimeout(() => modal.style.display = 'none', 1200);
+      refreshRewards();
+    } catch (e) {
+      modalText.innerText = 'Claim failed';
+      setTimeout(() => modal.style.display = 'none', 1500);
+    }
+  };
 </script>
 
 </body>
 </html>
-
