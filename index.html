@@ -132,74 +132,31 @@ footer {
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
 
 <script>
-let provider;
-let signer;
-let contract;
-
-const contractAddress = "0x49ef1deD412f91c06030047e7DA92034066C4127";
-
-const abi = [
-  "function withdrawableRewardOf(address) view returns (uint256)",
-  "function withdrawReward()"
-];
-
 const connectBtn = document.getElementById("connectWallet");
-const claimBtn = document.getElementById("claimRewards");
-const rewardValue = document.getElementById("rewardValue");
-const statusText = document.getElementById("claimStatus");
 
-async function connectWallet() {
-  if (!window.ethereum) {
-    alert("MetaMask not detected");
+connectBtn.onclick = async () => {
+  console.log("Connect clicked");
+
+  if (typeof window.ethereum === "undefined") {
+    alert("MetaMask not found. Open this site inside MetaMask.");
     return;
   }
 
-  await window.ethereum.request({ method: "eth_requestAccounts" });
-
-  provider = new ethers.providers.Web3Provider(window.ethereum);
-  signer = provider.getSigner();
-  contract = new ethers.Contract(contractAddress, abi, signer);
-
-  connectBtn.innerText = "Wallet Connected";
-  connectBtn.disabled = true;
-
-  refreshRewards();
-}
-
-async function refreshRewards() {
-  const user = await signer.getAddress();
-  const rewards = await contract.withdrawableRewardOf(user);
-  const formatted = ethers.utils.formatUnits(rewards, 18);
-
-  if (rewards.eq(0)) {
-    rewardValue.innerText = "0 WPEPU";
-    statusText.innerText = "No rewards to claim";
-    claimBtn.disabled = true;
-  } else {
-    rewardValue.innerText = formatted + " WPEPU";
-    statusText.innerText = "";
-    claimBtn.disabled = false;
-  }
-}
-
-async function claimRewards() {
   try {
-    claimBtn.disabled = true;
-    statusText.innerText = "Claiming rewards...";
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts"
+    });
 
-    const tx = await contract.withdrawReward();
-    await tx.wait();
+    const account = accounts[0];
+    connectBtn.innerText =
+      account.slice(0, 6) + "..." + account.slice(-4);
 
-    statusText.innerText = "Rewards claimed!";
-    refreshRewards();
-  } catch (e) {
-    statusText.innerText = "Claim failed";
-    claimBtn.disabled = false;
+    console.log("Connected:", account);
+  } catch (err) {
+    console.error("Connection error:", err);
+    alert("Connection rejected");
   }
-}
-
-connectBtn.onclick = connectWallet;
-claimBtn.onclick = claimRewards;
+};
 </script>
 
 </body>
