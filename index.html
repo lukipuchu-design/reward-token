@@ -145,39 +145,31 @@ footer {
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.1/dist/ethers.umd.min.js"></script>
 
 <script>
-const CONTRACT = "0x49ef1deD412f91c06030047e7DA92034066C4127";
-const CHAIN_ID = 777777;
-
-const ABI = [
-  "function withdrawableRewardOf(address) view returns (uint256)",
-  "function withdrawReward()"
-];
-
-let provider, signer, contract;
-
-const rewardValue = document.getElementById("rewardValue");
-const modal = document.getElementById("modal");
-const modalText = document.getElementById("modalText");
+let userAccount = null;
 
 document.getElementById("connect").onclick = async () => {
-  if (!window.ethereum) return alert("Open in MetaMask");
-
-  provider = new ethers.BrowserProvider(window.ethereum);
-  await provider.send("eth_requestAccounts", []);
-  signer = await provider.getSigner();
-
-  const net = await provider.getNetwork();
-  if (Number(net.chainId) !== CHAIN_ID) {
-    await window.ethereum.request({
-      method: "wallet_switchEthereumChain",
-      params: [{ chainId: ethers.toBeHex(CHAIN_ID) }]
-    });
+  if (!window.ethereum) {
+    alert("Please open this site inside MetaMask");
+    return;
   }
 
-  contract = new ethers.Contract(CONTRACT, ABI, signer);
-  document.getElementById("connect").innerText = "Connected";
-  refresh();
+  try {
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts"
+    });
+
+    userAccount = accounts[0];
+
+    document.getElementById("connect").innerText =
+      userAccount.slice(0, 6) + "..." + userAccount.slice(-4);
+
+    console.log("Connected:", userAccount);
+  } catch (err) {
+    console.error("Connect error:", err);
+    alert("Connection rejected");
+  }
 };
+</script>
 
 async function refresh() {
   const addr = await signer.getAddress();
