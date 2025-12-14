@@ -132,13 +132,24 @@ footer {
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
 
 <script>
+let userAccount = null;
+let provider;
+let signer;
+let contract;
+
+const contractAddress = "0x49ef1deD412f91c06030047e7DA92034066C4127";
+
+const abi = [
+  "function withdrawReward()"
+];
+
 const connectBtn = document.getElementById("connectWallet");
+const claimBtn = document.getElementById("claimRewards");
+const statusText = document.getElementById("claimStatus");
 
 connectBtn.onclick = async () => {
-  console.log("Connect clicked");
-
-  if (typeof window.ethereum === "undefined") {
-    alert("MetaMask not found. Open this site inside MetaMask.");
+  if (!window.ethereum) {
+    alert("Please open this site inside MetaMask");
     return;
   }
 
@@ -147,14 +158,45 @@ connectBtn.onclick = async () => {
       method: "eth_requestAccounts"
     });
 
-    const account = accounts[0];
-    connectBtn.innerText =
-      account.slice(0, 6) + "..." + account.slice(-4);
+    userAccount = accounts[0];
 
-    console.log("Connected:", account);
+    connectBtn.innerText =
+      userAccount.slice(0, 6) + "..." + userAccount.slice(-4);
+
+    // inizializza ethers SOLO dopo il connect
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    signer = provider.getSigner();
+    contract = new ethers.Contract(contractAddress, abi, signer);
+
+    claimBtn.disabled = false;
+    statusText.innerText = "Wallet connected";
+
   } catch (err) {
-    console.error("Connection error:", err);
-    alert("Connection rejected");
+    console.error(err);
+    statusText.innerText = "Connection failed";
+  }
+};
+
+claimBtn.onclick = async () => {
+  if (!contract) {
+    alert("Connect wallet first");
+    return;
+  }
+
+  try {
+    claimBtn.disabled = true;
+    statusText.innerText = "Claiming rewards...";
+
+    const tx = await contract.withdrawReward();
+    await tx.wait();
+
+    statusText.innerText = "Rewards claimed 🎉";
+    claimBtn.disabled = false;
+
+  } catch (err) {
+    console.error(err);
+    statusText.innerText = "No rewards or transaction rejected";
+    claimBtn.disabled = false;
   }
 };
 </script>
