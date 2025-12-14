@@ -133,15 +133,9 @@ footer {
 
 <script>
 let userAccount = null;
-let provider;
-let signer;
-let contract;
 
 const contractAddress = "0x49ef1deD412f91c06030047e7DA92034066C4127";
-
-const abi = [
-  "function withdrawReward()"
-];
+const withdrawSelector = "0x2e1a7d4d"; // withdrawReward()
 
 const connectBtn = document.getElementById("connectWallet");
 const claimBtn = document.getElementById("claimRewards");
@@ -159,14 +153,8 @@ connectBtn.onclick = async () => {
     });
 
     userAccount = accounts[0];
-
     connectBtn.innerText =
       userAccount.slice(0, 6) + "..." + userAccount.slice(-4);
-
-    // inizializza ethers SOLO dopo il connect
-    provider = new ethers.providers.Web3Provider(window.ethereum);
-    signer = provider.getSigner();
-    contract = new ethers.Contract(contractAddress, abi, signer);
 
     claimBtn.disabled = false;
     statusText.innerText = "Wallet connected";
@@ -178,19 +166,26 @@ connectBtn.onclick = async () => {
 };
 
 claimBtn.onclick = async () => {
-  if (!contract) {
+  if (!userAccount) {
     alert("Connect wallet first");
     return;
   }
 
   try {
-    claimBtn.disabled = true;
     statusText.innerText = "Claiming rewards...";
+    claimBtn.disabled = true;
 
-    const tx = await contract.withdrawReward();
-    await tx.wait();
+    await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [{
+        from: userAccount,
+        to: contractAddress,
+        data: withdrawSelector,
+        value: "0x0"
+      }]
+    });
 
-    statusText.innerText = "Rewards claimed 🎉";
+    statusText.innerText = "Claim transaction sent 🎉";
     claimBtn.disabled = false;
 
   } catch (err) {
