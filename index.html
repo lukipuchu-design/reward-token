@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>REWARD (RWD)</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
@@ -106,8 +106,8 @@ footer {
   <div class="claim-box">
     <div>Your claimable WPEPU</div>
     <div id="rewardValue" class="reward-big">—</div>
-    <button id="connect">Connect Wallet</button>
-    <button id="claim" style="margin-top:10px">Claim</button>
+    <button id="connectBtn">Connect Wallet</button>
+    <button id="claimBtn" style="margin-top:10px">Claim</button>
   </div>
 </header>
 
@@ -127,8 +127,8 @@ footer {
   <h3>Do I need to stake?</h3>
   <p>No. Just hold RWD.</p>
 
-  <h3>Is the contract mutable?</h3>
-  <p>No. Taxes and logic are locked forever.</p>
+  <h3>Is the contract immutable?</h3>
+  <p>Yes. Taxes and logic are locked forever.</p>
 </section>
 
 <footer>
@@ -145,39 +145,67 @@ footer {
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.1/dist/ethers.umd.min.js"></script>
 
 <script>
-let userAccount = null;
+const CONTRACT_ADDRESS = "0x49ef1deD412f91c06030047e7DA92034066C4127";
+const REQUIRED_CHAIN_ID = 777777;
 
-document.getElementById("connect").onclick = async () => {
+const ABI = [
+  "function withdrawableRewardOf(address) view returns (uint256)",
+  "function withdrawReward()"
+];
+
+let provider, signer, contract;
+
+const connectBtn = document.getElementById("connectBtn");
+const claimBtn = document.getElementById("claimBtn");
+const rewardValue = document.getElementById("rewardValue");
+const modal = document.getElementById("modal");
+const modalText = document.getElementById("modalText");
+
+connectBtn.onclick = async () => {
   if (!window.ethereum) {
     alert("Please open this site inside MetaMask");
     return;
   }
 
   try {
-    const accounts = await window.ethereum.request({
-      method: "eth_requestAccounts"
-    });
+    provider = new ethers.BrowserProvider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    signer = await provider.getSigner();
 
-    userAccount = accounts[0];
+    const network = await provider.getNetwork();
+    if (Number(network.chainId) !== REQUIRED_CHAIN_ID) {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: ethers.toBeHex(REQUIRED_CHAIN_ID) }]
+      });
+    }
 
-    document.getElementById("connect").innerText =
-      userAccount.slice(0, 6) + "..." + userAccount.slice(-4);
+    contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
 
-    console.log("Connected:", userAccount);
-  } catch (err) {
-    console.error("Connect error:", err);
-    alert("Connection rejected");
+    const addr = await signer.getAddress();
+    connectBtn.innerText = addr.slice(0,6) + "..." + addr.slice(-4);
+
+    refreshRewards();
+
+  } catch (e) {
+    console.error(e);
+    alert("Wallet connection failed");
   }
 };
-</script>
 
-async function refresh() {
+async function refreshRewards() {
+  if (!contract) return;
+
   const addr = await signer.getAddress();
   const r = await contract.withdrawableRewardOf(addr);
-  rewardValue.innerText = r === 0n ? "0 WPEPU" : ethers.formatUnits(r, 18)+" WPEPU";
+
+  rewardValue.innerText =
+    r === 0n ? "0 WPEPU" : ethers.formatUnits(r, 18) + " WPEPU";
 }
 
-document.getElementById("claim").onclick = async () => {
+claimBtn.onclick = async () => {
+  if (!contract) return alert("Connect wallet first");
+
   modal.style.display = "flex";
   modalText.innerText = "Claiming…";
 
@@ -185,12 +213,12 @@ document.getElementById("claim").onclick = async () => {
     const tx = await contract.withdrawReward();
     await tx.wait();
     modalText.innerText = "Paid.";
-    refresh();
+    refreshRewards();
   } catch {
     modalText.innerText = "No rewards yet.";
   }
 
-  setTimeout(()=>modal.style.display="none",1500);
+  setTimeout(() => modal.style.display = "none", 1500);
 };
 </script>
 
