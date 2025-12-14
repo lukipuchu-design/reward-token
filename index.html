@@ -55,6 +55,11 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
 section {
   padding: 80px 10%;
 }
@@ -74,21 +79,6 @@ footer {
   opacity: .5;
 }
 
-.modal {
-  position: fixed;
-  inset: 0;
-  background: #000000cc;
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: #111;
-  padding: 30px;
-  border-radius: 20px;
-  text-align: center;
-}
 </style>
 </head>
 
@@ -106,8 +96,11 @@ footer {
   <div class="claim-box">
     <div>Your claimable WPEPU</div>
     <div id="rewardValue" class="reward-big">—</div>
-    <button id="connectBtn">Connect Wallet</button>
-    <button id="claimBtn" style="margin-top:10px">Claim</button>
+
+    <button id="connectWallet">Connect Wallet</button>
+    <button id="claimRewards" style="margin-top:10px" disabled>Claim</button>
+
+    <div id="claimStatus" style="margin-top:10px"></div>
   </div>
 </header>
 
@@ -135,14 +128,8 @@ footer {
 © REWARD — Full degen mode enabled
 </footer>
 
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <p id="modalText">Processing…</p>
-  </div>
-</div>
-
-<!-- ETHERS v6 -->
-<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.1/dist/ethers.umd.min.js"></script>
+<!-- ETHERS v5 (QUELLO CHE FUNZIONA) -->
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
 
 <script>
 let provider;
@@ -153,7 +140,7 @@ const contractAddress = "0x49ef1deD412f91c06030047e7DA92034066C4127";
 
 const abi = [
   "function withdrawableRewardOf(address) view returns (uint256)",
-  "function withdrawReward()",
+  "function withdrawReward()"
 ];
 
 const connectBtn = document.getElementById("connectWallet");
